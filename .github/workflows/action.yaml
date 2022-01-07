@@ -44,6 +44,23 @@ jobs:
         aws-region: us-east-1
     - name: upload to s3
       run: aws s3 cp ${{github.sha}}.zip s3://aseef-452451244513/${{github.sha}}.zip
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+        aws-region: us-east-1
+    - name: upload function
+      run: |
+        aws lambda update-function-code \
+        --function-name myfunc \
+        --s3-bucket aseef-452451244513 \
+        --s3-key ${{github.sha}}.zip \
+        --publish
+    
     
     
     
